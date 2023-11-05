@@ -174,7 +174,7 @@
             this.btnUp.Margin = new System.Windows.Forms.Padding(10, 25, 10, 0);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(90, 40);
-            this.btnUp.TabIndex = 3;
+            this.btnUp.TabIndex = 0;
             this.btnUp.TabStop = false;
             this.btnUp.UseVisualStyleBackColor = true;
             this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
@@ -186,7 +186,7 @@
             this.btnDown.Margin = new System.Windows.Forms.Padding(10, 10, 10, 25);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(90, 40);
-            this.btnDown.TabIndex = 4;
+            this.btnDown.TabIndex = 0;
             this.btnDown.TabStop = false;
             this.btnDown.UseVisualStyleBackColor = true;
             this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
@@ -198,7 +198,7 @@
             this.btnLeft.Margin = new System.Windows.Forms.Padding(0, 25, 0, 25);
             this.btnLeft.Name = "btnLeft";
             this.btnLeft.Size = new System.Drawing.Size(90, 90);
-            this.btnLeft.TabIndex = 5;
+            this.btnLeft.TabIndex = 0;
             this.btnLeft.TabStop = false;
             this.btnLeft.UseVisualStyleBackColor = true;
             this.btnLeft.Click += new System.EventHandler(this.btnLeft_Click);
@@ -210,7 +210,7 @@
             this.btnRight.Margin = new System.Windows.Forms.Padding(0, 25, 0, 25);
             this.btnRight.Name = "btnRight";
             this.btnRight.Size = new System.Drawing.Size(90, 90);
-            this.btnRight.TabIndex = 6;
+            this.btnRight.TabIndex = 0;
             this.btnRight.TabStop = false;
             this.btnRight.UseVisualStyleBackColor = true;
             this.btnRight.Click += new System.EventHandler(this.btnRight_Click);
@@ -265,7 +265,6 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress_2);
-            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();

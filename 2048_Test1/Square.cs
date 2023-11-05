@@ -158,6 +158,11 @@ namespace _2048_Test1
             return globalCount;
         }
 
+        public static void SetCount(int a)// Для вывода общего счёта
+        {
+            globalCount = a;
+        }
+
         public void CreateValue()// Для создания цифры в квадратике
         {
                 //rnd = new Random();

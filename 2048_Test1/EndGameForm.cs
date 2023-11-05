@@ -16,6 +16,9 @@ namespace _2048_Test1
         delegate void Delegat();
         private System.Windows.Forms.Timer opacityTimer = new System.Windows.Forms.Timer();
 
+        public delegate void Method1EventHandler();
+        public event Method1EventHandler Method1Event;
+
         public EndGameForm()
         {
             InitializeComponent();

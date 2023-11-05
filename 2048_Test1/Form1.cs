@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Resources;
 using System.Threading;
 using System.Runtime;
+using System.Runtime.InteropServices;
 
 // Нужно сделать:
 //  1) Свичи ++
@@ -22,6 +23,10 @@ using System.Runtime;
 //  8) Сделать анимацию движения и появления 
 //  9) Написать функцию всплывания Окна конца игры.
 //  10) Написать начальное окно.
+//
+//  Все вышенаписанные задачи выполнены
+//  Осталось только дописать управление игровым движением с помощью клавиш - стрелок
+//
 
 namespace _2048_Test1
 {
@@ -43,6 +48,8 @@ namespace _2048_Test1
         Random rnd = new Random();
         Square[,] sqrs;
 
+        public delegate void Form2ClosedEventHandler();
+        public event Form2ClosedEventHandler Form2Closed;
 
         public Form1()
         {
@@ -56,7 +63,7 @@ namespace _2048_Test1
         {
             timer1.Interval = 1000;
             timer1.Start();
-
+            this.KeyPreview = true;
             
 
             btn_Exit.BackColor = Color.Transparent;
@@ -725,49 +732,33 @@ namespace _2048_Test1
 
         private void Form1_KeyPress_2(object sender, KeyPressEventArgs e)
         {
-            
             //MessageBox.Show("Ri");
         }
 
-        private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            //if (EndGame == false)
-            //{
-            //    switch (e.KeyCode)
-            //    {
-            //        case Keys.Left:
-                        
-            //            // Предотвращение выбора кнопок
-            //            LeftSwitch();
-            //            Console.WriteLine("Left");
-            //            break;
-            //        case Keys.Up:
-            //            UpSwitch();
-            //            Console.WriteLine("Up");
-            //            break;
-            //        case Keys.Down:
-            //            DownSwitch();
-            //            Console.WriteLine("Down");
-            //            break;
-            //        case Keys.Right:
-            //            RightSwitch();
-            //            Console.WriteLine("Right");
-            //            break;
-            //    }
-            //}
-        }
-
-            private void Form1_KeyDown(object sender, KeyEventArgs e)
-        {
-
-            // Goood work
-
-            //MessageBox.Show("Down");
-            //MessageBox.Show($"{e.KeyCode}  {Keys.Down}");
             if (EndGame == false)
             {
                 switch (e.KeyCode)
                 {
+                    case Keys.Left:
+                        LeftSwitch();
+                        Console.WriteLine("Left");
+                        break;
+                    case Keys.Up:
+                        UpSwitch();
+                        Console.WriteLine("Up");
+                        break;
+                    case Keys.Down:
+                        DownSwitch();
+                        Console.WriteLine("Down");
+                        break;
+                    case Keys.Right:
+                        RightSwitch();
+                        Console.WriteLine("Right");
+                        break;
                     case Keys.A:
                         LeftSwitch();
                         break;
@@ -780,29 +771,8 @@ namespace _2048_Test1
                     case Keys.D:
                         RightSwitch();
                         break;
-                    case Keys.Left:
-                        // Предотвращение выбора кнопок
-                        //e.Handled = true;
-                        LeftSwitch();
-                        break;
-                    case Keys.Up:
-                        // Предотвращение выбора кнопок
-                        //e.Handled = true;
-                        UpSwitch();
-                        break;
-                    case Keys.Down:
-                        // Предотвращение выбора кнопок
-                       //e.Handled = true;
-                        DownSwitch();
-                        break;
-                    case Keys.Right:
-                        
-                        RightSwitch();
-                       // e.Handled = true;
-                        break;
                 }
             }
-            
         }
 
         private void CreateOneNew()
@@ -876,11 +846,15 @@ namespace _2048_Test1
                 {
                     Logger.Info("Не нашел свободного места для нового квадрата - вы проиграли! ");
 
-                    var window = new EndGameForm();
+                    var window2 = new EndGameForm();
+                    window2.FormClosed += (sender, e) =>
+                    {
+                        restart_game();
+                    };
                     //CreateEndWindow();
-                    window.Show();
+                    window2.Show();
                     Logger.Info("По идее создал окно проигрыша ");
-                    window.Location = new Point(this.Location.X + this.Size.Width / 2 - window.Size.Width/2, this.Location.Y + this.Size.Height / 2 - window.Size.Height/2);
+                    window2.Location = new Point(this.Location.X + this.Size.Width / 2 - window2.Size.Width/2, this.Location.Y + this.Size.Height / 2 - window2.Size.Height/2);
                     picBox1.Enabled = false;
                     btnDown.Enabled = false;
                     btnUp.Enabled = false;
@@ -888,8 +862,9 @@ namespace _2048_Test1
                     btnLeft.Enabled = false;
                     timer1.Stop();
                     EndGame = true;
+
                     // this.Close();
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -911,6 +886,18 @@ namespace _2048_Test1
                 cansellationTokenSource.Dispose();
                 Logger.Info("Очистил CansellToken");
             }
+        }
+
+        public void restart_game()
+        {
+            timer1.Interval = 1000;
+            timer1.Start();
+            EndGame = false;
+            DrawStartBlocks();
+            Count_lbl.Text = "Счет: 0";
+            Square.SetCount(0);
+            Time_lbl.Text = "Время 0:00:00";
+            hour = min = sek = 0;
         }
 
         //async void CreateEndWindow()
