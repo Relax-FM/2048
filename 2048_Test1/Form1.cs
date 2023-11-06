@@ -37,6 +37,7 @@ namespace _2048_Test1
         bool mouseDo = false;
         bool drag = false;
         bool EndGame = false;
+        bool restartFlag = false;
         Point startPoint = new Point(0, 0);
         Point mouseDown;
         Point mouseUp;
@@ -331,23 +332,34 @@ namespace _2048_Test1
 
         private void btnRight_Click(object sender, EventArgs e)
         {
-            RightSwitch();
+            if (EndGame == false)
+            { 
+                RightSwitch();
+            }
         }
 
         private void btnUp_Click(object sender, EventArgs e)
         {
-
-            UpSwitch();
+            if (EndGame == false)
+            {
+                UpSwitch();
+            }
         }
 
         private void btnDown_Click(object sender, EventArgs e)
         {
-            DownSwitch();
+            if (EndGame == false)
+            {
+                DownSwitch();
+            }
         }
 
         private void btnLeft_Click(object sender, EventArgs e)
         {
-            LeftSwitch();
+            if (EndGame == false)
+            {
+                LeftSwitch();
+            }
         }
 
         private string TimeToText()
@@ -417,23 +429,25 @@ namespace _2048_Test1
             //int x2 = 1;
             //int y2 = 1;
 
-
-            //DrawStartingGrid();
-            sqrs = new Square[4, 4];
-            Square.KnowSizes(sizeBorder, sizeBlock, gc, picBox1,bmp);
-            for (int i = 0; i < 4; i++)
+            if (restartFlag == false)
             {
-                for (int j = 0; j < 4; j++)
+                //DrawStartingGrid();
+                sqrs = new Square[4, 4];
+                Square.KnowSizes(sizeBorder, sizeBlock, gc, picBox1, bmp);
+                for (int i = 0; i < 4; i++)
                 {
-                    sqrs[i, j] = new Square(i, j);
-                    //if (((i == x1) && (j == y1)) || ((i == x2) && (j == y2)))
-                    //{
+                    for (int j = 0; j < 4; j++)
+                    {
+                        sqrs[i, j] = new Square(i, j);
+                        //if (((i == x1) && (j == y1)) || ((i == x2) && (j == y2)))
+                        //{
                         //sqrs[i, j].CreateValue(val);
-                    //}
+                        //}
 
-                    //else
+                        //else
                         //val *= 2;
-                    sqrs[i, j].Draw();
+                        sqrs[i, j].Draw();
+                    }
                 }
             }
 
@@ -453,7 +467,7 @@ namespace _2048_Test1
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    sqrs[i, j].Draw();
+                    sqrs[i, j].StartNewGame();
                 }
             }
             picBox1.Image = bmp;
@@ -705,7 +719,10 @@ namespace _2048_Test1
                 mouseUp = e.Location;
                 //MessageBox.Show($"Point : {mouseUp.X}x{mouseUp.Y}");
                 Point result = new Point(mouseUp.X - mouseDown.X, mouseUp.Y - mouseDown.Y);
-                ChooseToDo(result);
+                if (EndGame == false)
+                {
+                    ChooseToDo(result);
+                }
             }
         }
 
@@ -855,11 +872,7 @@ namespace _2048_Test1
                     window2.Show();
                     Logger.Info("По идее создал окно проигрыша ");
                     window2.Location = new Point(this.Location.X + this.Size.Width / 2 - window2.Size.Width/2, this.Location.Y + this.Size.Height / 2 - window2.Size.Height/2);
-                    picBox1.Enabled = false;
-                    btnDown.Enabled = false;
-                    btnUp.Enabled = false;
-                    btnRight.Enabled = false;
-                    btnLeft.Enabled = false;
+                  
                     timer1.Stop();
                     EndGame = true;
 
@@ -890,12 +903,15 @@ namespace _2048_Test1
 
         public void restart_game()
         {
+            Logger.Error("Рестарт игры");
+            Refreshing();
+            Square.SetCount(0);
+            restartFlag = true;
             timer1.Interval = 1000;
             timer1.Start();
             EndGame = false;
             DrawStartBlocks();
             Count_lbl.Text = "Счет: 0";
-            Square.SetCount(0);
             Time_lbl.Text = "Время 0:00:00";
             hour = min = sek = 0;
         }

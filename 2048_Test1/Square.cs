@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing.Text;
 
 namespace _2048_Test1
 {
@@ -22,13 +23,19 @@ namespace _2048_Test1
         //private Point txtIndent;
         private Point position;
         private Point pixelPosition;
-        
-        
+
+        private Point LeftUpPoz;
+        private Size RightDownPoz;
+        private int xForDraw=0, yForDraw=0;
+
+
         //private bool flagEnabled = false;
         private Color sqrColor = Color.FromArgb(255, 255, 255);
         private Color txtColor;
         private Font sqrFont = new Font(FontFamily.GenericSansSerif, fontSize, FontStyle.Bold);
         static Random rnd = new Random();
+
+        private System.Windows.Forms.Timer timerOK;
 
         public Square(int x, int y)
         {
@@ -41,6 +48,11 @@ namespace _2048_Test1
             return value;
         }
 
+        public void SetValue(int value)
+        {
+            value = value;
+        }
+
         public static Square operator +(Square s1,Square s2)// Сложение квадратиков
         {
             int val = s1.value;
@@ -50,6 +62,8 @@ namespace _2048_Test1
                 Properties.Settings.Default.hhghscr = globalCount;
                 Properties.Settings.Default.Save();
             }
+
+            //DrawMoveSqrs(s1, s2);
             s1.value = s1.value + s2.value;
             s2.value = 0;
 
@@ -73,67 +87,69 @@ namespace _2048_Test1
             return s1;
         }
 
-        private async void DrawMoveSqrs(Point p2,int val,Bitmap bit)
+        private async void DrawMoveSqrs(Square s1, Square s2)
         {
-            Square s1 = new Square(p2.X, p2.Y);
-            s1.CreateValue(val);
-            //s1.CheckColor();
+            int x, y, x2, y2;
+
+            //Square s1 = new Square(p2.X, p2.Y);
+            //s1.CreateValue(val);
+            ////s1.CheckColor();
 
             
 
-            int x, y,speed;
-            speed = 0;
-            x = s1.pixelPosition.X - pixelPosition.X;
-            y = s1.pixelPosition.Y - pixelPosition.Y;
+            //int x, y,speed;
+            //speed = 0;
+            //x = s1.pixelPosition.X - pixelPosition.X;
+            //y = s1.pixelPosition.Y - pixelPosition.Y;
 
-            if (x != 0)
-            {
-                if (x > 0)
-                {
-                    speed = -5;
-                    MessageBox.Show("X speed -5");
-                }
-                else if (x < 0)
-                {
-                    speed = 5;
-                    MessageBox.Show("X speed 5");
-                }
-                while (s1.pixelPosition.X != pixelPosition.X)
-                {
-                    gc.DrawImage(bit, new Point(0, 0));
-                    picBox.Image = bmp;
-                    s1.Draw();
-                    s1.pixelPosition = new Point(s1.pixelPosition.X + speed, s1.pixelPosition.Y);
-                    picBox.Image = bmp;
-                    //MessageBox.Show("Move");
-                    //await Task.Delay(100);
-                }
-            }
-            else if (y != 0)
-            {
-                if (y > 0)
-                {
-                    speed = -5;
-                    MessageBox.Show("Y speed -5");
-                }
-                else if (y < 0)
-                {
-                    speed = 5;
-                    MessageBox.Show("Y speed 5");
-                }
-                while (s1.pixelPosition.Y != pixelPosition.Y)
-                {
-                    gc.DrawImage(bit, new Point(0, 0));
-                    picBox.Image = bmp;
-                    s1.Draw();
-                    s1.pixelPosition = new Point(s1.pixelPosition.X, s1.pixelPosition.Y+ speed);
-                    picBox.Image = bmp;
-                    //MessageBox.Show("Move");
-                    //await Task.Delay(100);
-                }
-            }
-            Draw();
-            picBox.Image = bmp;
+            //if (x != 0)
+            //{
+            //    if (x > 0)
+            //    {
+            //        speed = -5;
+            //        MessageBox.Show("X speed -5");
+            //    }
+            //    else if (x < 0)
+            //    {
+            //        speed = 5;
+            //        MessageBox.Show("X speed 5");
+            //    }
+            //    while (s1.pixelPosition.X != pixelPosition.X)
+            //    {
+            //        gc.DrawImage(bit, new Point(0, 0));
+            //        picBox.Image = bmp;
+            //        s1.Draw();
+            //        s1.pixelPosition = new Point(s1.pixelPosition.X + speed, s1.pixelPosition.Y);
+            //        picBox.Image = bmp;
+            //        //MessageBox.Show("Move");
+            //        //await Task.Delay(100);
+            //    }
+            //}
+            //else if (y != 0)
+            //{
+            //    if (y > 0)
+            //    {
+            //        speed = -5;
+            //        MessageBox.Show("Y speed -5");
+            //    }
+            //    else if (y < 0)
+            //    {
+            //        speed = 5;
+            //        MessageBox.Show("Y speed 5");
+            //    }
+            //    while (s1.pixelPosition.Y != pixelPosition.Y)
+            //    {
+            //        gc.DrawImage(bit, new Point(0, 0));
+            //        picBox.Image = bmp;
+            //        s1.Draw();
+            //        s1.pixelPosition = new Point(s1.pixelPosition.X, s1.pixelPosition.Y+ speed);
+            //        picBox.Image = bmp;
+            //        //MessageBox.Show("Move");
+            //        //await Task.Delay(100);
+            //    }
+            //}
+            //Draw();
+            //picBox.Image = bmp;
 
             //Bitmap bmp2 = Bitmap;
         }
@@ -179,11 +195,11 @@ namespace _2048_Test1
             //Draw();
             CreateOneNewSqr();
             //Draw();
-
+            Logger.Info("Создание кубика выполнено");
                 //flagEnabled = true;
         }
 
-        private async void CreateOneNewSqr()
+        private async void CreateOneNewSqr1()
         {
             Brush br = new SolidBrush(sqrColor);
             int x, y;
@@ -208,6 +224,65 @@ namespace _2048_Test1
             picBox.Image = bmp;
 
         }
+
+        // TODO: Сделать здесь появление нового квадратика
+        private async void CreateOneNewSqr()
+        {
+            //Brush br = new SolidBrush(sqrColor);
+            //int x, y;
+            //x = 0;
+            //y = 0;
+            //Point LeftUpPoz = new Point(pixelPosition.X + (blockSize / 2) - x, pixelPosition.Y + (blockSize / 2) - y);
+            //Size RightDownPoz = new Size(x * 2, y * 2);
+            //Rectangle sqr = new Rectangle(LeftUpPoz, RightDownPoz);
+            //while (LeftUpPoz.X != pixelPosition.X)
+            //{
+            //    gc.FillRectangle(br, sqr);
+            //    x += 2;
+            //    y += 2;
+            //    LeftUpPoz = new Point(pixelPosition.X + (blockSize / 2) - x, pixelPosition.Y + (blockSize / 2) - y);
+            //    RightDownPoz = new Size(x * 2, y * 2);
+            //    sqr = new Rectangle(LeftUpPoz, RightDownPoz);
+            //    picBox.Image = bmp;
+            //    //await Task.Delay(1);
+
+            //}
+            //Draw();
+            //picBox.Image = bmp;
+
+            timerOK = new System.Windows.Forms.Timer();
+            xForDraw = yForDraw = 0;
+            LeftUpPoz = new Point(pixelPosition.X + (blockSize / 2) - xForDraw, pixelPosition.Y + (blockSize / 2) - yForDraw);
+            RightDownPoz = new Size(0, 0);
+            timerOK.Interval = 8;
+            timerOK.Tick += TimerTick;
+            timerOK.Start();
+
+
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            if (LeftUpPoz.X == pixelPosition.X)
+            {
+                timerOK.Stop();
+                Draw();
+                picBox.Image = bmp;
+                //MessageBox.Show("X достиг значения X2!");
+            }
+            else
+            { 
+                Brush br = new SolidBrush(sqrColor);
+                LeftUpPoz = new Point(pixelPosition.X + (blockSize / 2) - xForDraw, pixelPosition.Y + (blockSize / 2) - yForDraw);
+                RightDownPoz = new Size(xForDraw * 2, yForDraw * 2);
+                Rectangle sqr = new Rectangle(LeftUpPoz, RightDownPoz);
+                gc.FillRectangle(br, sqr);
+                xForDraw += 2;
+                yForDraw += 2;
+                picBox.Image = bmp;
+            }
+        }
+
 
         public void CreateValue(int val)
         {
@@ -358,5 +433,18 @@ namespace _2048_Test1
                 gc.DrawString(Convert.ToString(value), sqrFont, txtBr, ((float)pixelPosition.X + (float)blockSize / 2 - x), ((float)pixelPosition.Y + (float)blockSize / 2 - y));
             }
         }
+
+        public void StartNewGame()
+        {
+            Logger.Info("Рестарт игры выполнен");
+            value = 0;
+            sqrColor = Color.FromArgb(255, 255, 255);
+            txtColor = new Color();
+            Brush br = new SolidBrush(sqrColor);
+            Rectangle rec;
+            gc.FillRectangle(br, rec = new Rectangle((pixelPosition.X), (pixelPosition.Y), blockSize, blockSize));
+            picBox.Image = bmp;
+        }
     }
 }
+
