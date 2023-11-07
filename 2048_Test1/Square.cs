@@ -35,6 +35,9 @@ namespace _2048_Test1
         private Font sqrFont = new Font(FontFamily.GenericSansSerif, fontSize, FontStyle.Bold);
         static Random rnd = new Random();
 
+        static List<Bitmap> states = new List<Bitmap>();
+        static Bitmap statBmp;
+        static System.Windows.Forms.Timer timer;
         private System.Windows.Forms.Timer timerOK;
 
         public Square(int x, int y)
@@ -52,6 +55,15 @@ namespace _2048_Test1
         {
             value = value;
         }
+        private static void TimerTick(object sender, EventArgs e,Square s1, Square s2)
+        {
+            if ((s1.pixelPosition.X == s2.pixelPosition.X) && (s1.pixelPosition.Y == s2.pixelPosition.Y))
+            {
+
+            }
+            else
+        }
+
 
         public static Square operator +(Square s1,Square s2)// Сложение квадратиков
         {
@@ -64,16 +76,24 @@ namespace _2048_Test1
             }
 
             //DrawMoveSqrs(s1, s2);
-            s1.value = s1.value + s2.value;
+            //s1.value = s1.value + s2.value;
             s2.value = 0;
-
+            s2.CheckColor();
+            s2.Draw();
+            statBmp = new Bitmap(bmp);
             //Logger.Info($"Сложил два квадрата {s1.position.X}x{s1.position.Y} и {s2.position.X}x{s2.position.Y} ");
+
+            var s3 = new Square(s1.position.X, s1.position.Y);
+
+            timer = new System.Windows.Forms.Timer();
+            timer.Interval = 200;
+            timer.Tick += (sender, e) => TimerTick(sender, e, s3, s2);
 
 
             s1.CheckColor();
-            s2.CheckColor();
+            //s2.CheckColor();
             s1.Draw();
-            s2.Draw();
+            
             picBox.Image = bmp;
 
             //Bitmap bit = new Bitmap(picBox.Image, picBox.Size.Width, picBox.Size.Height);
@@ -438,11 +458,13 @@ namespace _2048_Test1
         {
             Logger.Info("Рестарт игры выполнен");
             value = 0;
+            //CheckColor();
             sqrColor = Color.FromArgb(255, 255, 255);
             txtColor = new Color();
             Brush br = new SolidBrush(sqrColor);
             Rectangle rec;
             gc.FillRectangle(br, rec = new Rectangle((pixelPosition.X), (pixelPosition.Y), blockSize, blockSize));
+            //Draw();
             picBox.Image = bmp;
         }
     }
