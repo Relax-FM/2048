@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing.Text;
+using System.Security.Cryptography;
 
 namespace _2048_Test1
 {
@@ -55,19 +56,52 @@ namespace _2048_Test1
         {
             value = value;
         }
-        private static void TimerTick(object sender, EventArgs e,Square s1, Square s2)
+        private static void TimerTick1(object sender, EventArgs e,ref Square s1, Square s2, int padding, bool flagX)
         {
-            if ((s1.pixelPosition.X == s2.pixelPosition.X) && (s1.pixelPosition.Y == s2.pixelPosition.Y))
+            //bmp = new Bitmap(statBmp);
+            gc.Clear(Color.FromArgb(128,128,128));
+            gc.DrawImage(statBmp, 0, 0);
+            if (flagX)
             {
-
+                if (s1.pixelPosition.X == s2.pixelPosition.X)
+                {
+                    timer.Stop();
+                    s1.value = s1.value + s2.value;
+                    s1.CheckColor();
+                    s1.Draw();
+                    picBox.Image = bmp;
+                }
+                else
+                {
+                    s2.pixelPosition.X = s2.pixelPosition.X - padding;
+                    s2.Draw();
+                    picBox.Image = bmp;
+                }
             }
-            else
+            else if (flagX == false)
+            {
+                if (s1.pixelPosition.Y == s2.pixelPosition.Y)
+                {
+                    timer.Stop();
+                    s1.value = s1.value + s2.value;
+                    s1.CheckColor();
+                    s1.Draw();
+                    picBox.Image = bmp;
+                }
+                else
+                {
+                    s2.pixelPosition.Y = s2.pixelPosition.Y - padding;
+                    s2.Draw();
+                    picBox.Image = bmp;
+                }
+            }
         }
 
 
         public static Square operator +(Square s1,Square s2)// Сложение квадратиков
         {
             int val = s1.value;
+            int val2 = s2.value;
             globalCount += 2 * s1.value;
             if (globalCount >= Properties.Settings.Default.hhghscr)
             {
@@ -76,24 +110,51 @@ namespace _2048_Test1
             }
 
             //DrawMoveSqrs(s1, s2);
-            //s1.value = s1.value + s2.value;
+
+            var s3 = new Square(s2.position.X, s2.position.Y);
+            s3.CreateValue(s2.value);
+
+            // TODO: Если нужно то запускаем эту тему
+
+            // s1.value = s1.value + s2.value;
             s2.value = 0;
             s2.CheckColor();
             s2.Draw();
-            statBmp = new Bitmap(bmp);
-            //Logger.Info($"Сложил два квадрата {s1.position.X}x{s1.position.Y} и {s2.position.X}x{s2.position.Y} ");
 
-            var s3 = new Square(s1.position.X, s1.position.Y);
+            // TODO: Доделать эту хуйню
+
+            statBmp = new Bitmap(bmp);
+            ////Logger.Info($"Сложил два квадрата {s1.position.X}x{s1.position.Y} и {s2.position.X}x{s2.position.Y} ");
+
+            
+
+            int padding = 0;
+            bool axFlagX = true; 
+
+            if (s1.pixelPosition.X != s2.pixelPosition.X)
+            {
+                axFlagX = true;
+                padding = (s2.pixelPosition.X - s1.pixelPosition.X)/10;
+            }
+            else if (s1.pixelPosition.Y != s2.pixelPosition.Y)
+            {
+                axFlagX = false;
+                padding = (s2.pixelPosition.Y - s1.pixelPosition.Y)/10;
+            }
+
 
             timer = new System.Windows.Forms.Timer();
-            timer.Interval = 200;
-            timer.Tick += (sender, e) => TimerTick(sender, e, s3, s2);
+            timer.Interval = 8;
+            timer.Tick += (sender, e) => TimerTick1(sender, e,ref s1,s3, padding, axFlagX);
+            timer.Start();
 
-
-            s1.CheckColor();
+            //s1.value = val + val2;
+            //s1.CheckColor();
+            //s1.Draw();
+            //s1.CheckColor();
             //s2.CheckColor();
-            s1.Draw();
-            
+            //s1.Draw();
+
             picBox.Image = bmp;
 
             //Bitmap bit = new Bitmap(picBox.Image, picBox.Size.Width, picBox.Size.Height);
@@ -103,11 +164,11 @@ namespace _2048_Test1
             //s1.DrawMoveSqrs(s2.position,val,bit);
             //s2.CheckColor();
             //s2.Draw();
-            picBox.Image = bmp;
+            //picBox.Image = bmp;
             return s1;
         }
 
-        private async void DrawMoveSqrs(Square s1, Square s2)
+        private void DrawMoveSqrs(Square s1, Square s2)
         {
             int x, y, x2, y2;
 
@@ -219,7 +280,7 @@ namespace _2048_Test1
                 //flagEnabled = true;
         }
 
-        private async void CreateOneNewSqr1()
+        private void CreateOneNewSqr1()
         {
             Brush br = new SolidBrush(sqrColor);
             int x, y;
@@ -245,8 +306,8 @@ namespace _2048_Test1
 
         }
 
-        // TODO: Сделать здесь появление нового квадратика
-        private async void CreateOneNewSqr()
+        
+        private void CreateOneNewSqr()
         {
             //Brush br = new SolidBrush(sqrColor);
             //int x, y;
